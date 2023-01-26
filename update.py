@@ -25,11 +25,11 @@ def linkify(text):
   return ''.join([ camel[0].lower(), text[1:] ])
 
 def include(term, name, definition, references, appearances):
-    output = f'<h1><a name="{name}">{term}</a></h1>\n'
+    output = f'<h2><a name="{name}">{term}</a></h2>\n'
     definition = definition.replace('\n\n', '</p><p>')# paragraph change
     output += f'<p>{definition}</p>\n\n'
     if len(references) > 0:
-        output += f'<h2>References</h2>\n<ol>'
+        output += f'<h3>References</h3>\n<ol>'
         for ref in references.split():
             url = ref.strip().lstrip()
             if 'http' in url: 
@@ -42,7 +42,7 @@ def include(term, name, definition, references, appearances):
     le = len(extended)
     lu = len(used)
     if li > 0 or le > 0 or lu > 0:
-        output += '<h2>Related courses</h2>\n'
+        output += '<h3>Related courses</h3>\n'
         if li > 0:
             intro = sorted(list(introduced))
             output += 'This concept is introduced in ' + ' '.join(intro) + '.'
@@ -120,9 +120,11 @@ for sheet in glossary.sheet_names:
 
 for theme in link:
     with open(f'{theme}.html', 'w') as target:
-        start = f'<!DOCTYPE html><html><head><title>{theme}</title>{latex}</head><body>'
+        start = f'<!DOCTYPE html><html><head><title>{theme}</title>{latex}</head>'
+        start += f'<body><h1>Glossary for {theme}</h1>\n'
         print(start, file = target)
-        for term in link[theme]:
+        listing = sorted(list(link[theme].keys()))
+        for term in listing:
             print(spacer, file = target)
             print(include(term, name[term], terms[term], references[term], usage[term]), file = target)
         print(spacer, file = target)
