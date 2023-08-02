@@ -154,8 +154,8 @@ McGill University
 for theme in link:
     with open(f'{theme}.html', 'w') as target:
         start = beginning + f'<head><title>{theme}</title>{latex}</head>'
-        start += f'<h2 class="topic-heading">Glossary for {theme}</h2>\n'
-        print(start, file = target)
+        start += f'<h2 class="topic-heading">Glossary for {theme}</h2>\n' 
+        print(start + inter, file = target)
         listing = sorted(list(link[theme].keys()), key = lambda s: s.casefold())
         for term in listing:
             print(spacer, file = target)
