@@ -4,7 +4,7 @@ pending = "We have not had a chance to write a definition yet, sorry for the inc
 latex = '''<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>'''
 
-spacer = '\n<hr noshade>\n'
+spacer = '\n\n'
 punct = ' .,:;-()s' # plurals are okay to link
 
 def anchor(text, keyword, link):
@@ -154,7 +154,7 @@ McGill University
 for theme in link:
     with open(f'{theme}.html', 'w') as target:
         start = beginning + f'<head><title>{theme}</title>{latex}</head>'
-        start += f'<body><h1>Glossary for {theme}</h1>\n'
+        start += f'<h2 class="topic-heading">Glossary for {theme}</h2>\n'
         print(start, file = target)
         listing = sorted(list(link[theme].keys()), key = lambda s: s.casefold())
         for term in listing:
