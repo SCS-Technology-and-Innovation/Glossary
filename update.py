@@ -25,9 +25,9 @@ def linkify(text):
   return ''.join([ camel[0].lower(), text[1:] ])
 
 def include(term, name, definition, references, appearances):
-    output = f'<h2><a name="{name}">{term}</a></h2>\n'
+    output = f'<details><summary><a name="{name}">{term}</a></summary>\n'
     definition = definition.replace('\n\n', '</p><p>')# paragraph change
-    output += f'<p>{definition}</p>\n\n'
+    output += f'{definition}\n\n'
     if len(references) > 0:
         output += f'<h3>References</h3>\n<ol>'
         for ref in references.split():
@@ -52,7 +52,7 @@ def include(term, name, definition, references, appearances):
         if lu > 0:
             uses = sorted(list(used))
             output += 'This concept is employed in ' + ' '.join(uses) + '.'
-    return output
+    return output + '</details>'
 
 import pandas as pd
 
@@ -71,7 +71,9 @@ for sheet in glossary.sheet_names:
     definition = header.index('Definition')
     courses = header[1 : definition]
     for index, values in data.iterrows():
-        term = str(values['Concept'])
+        term = str(values['Concept']).strip().lstrip()
+        if len(term) == 0:
+            continue
         if term == 'nan':
             continue # thank you, excel
         intro = set()
@@ -118,15 +120,45 @@ for sheet in glossary.sheet_names:
                             break # use the first match
         terms[term] = definition
 
+beginning = '''<!DOCTYPE html>
+<HTML lang="en">
+<HEAD>  
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="all.min.css">
+<link rel="stylesheet" href="styles.min.css">
+<link rel="stylesheet" href="custom.css">
+<link rel="stylesheet" href="style-2022.css">''' 
+
+inter = '''</head>
+<body class="content" role="document">
+<section class="bg-">
+<div class="container-fluid">'''
+
+ending = '''</div>
+</section>
+<footer>
+<p>
+Copyright © 
+<script>document.write(new Date().getFullYear());</script> 
+McGill University
+</p>
+</footer>
+<script src="jquery-3.3.1.slim.min.js"></script>
+<script src="popper.min.js"></script>
+<script src="bootstrap.min.js"></script>
+<script src="scripts.min.js "></script>
+</body>
+</html>'''
+
 for theme in link:
     with open(f'{theme}.html', 'w') as target:
-        start = f'<!DOCTYPE html><html><head><title>{theme}</title>{latex}</head>'
+        start = beginning + f'<head><title>{theme}</title>{latex}</head>'
         start += f'<body><h1>Glossary for {theme}</h1>\n'
         print(start, file = target)
-        listing = sorted(list(link[theme].keys()))
+        listing = sorted(list(link[theme].keys()), key = lambda s: s.casefold())
         for term in listing:
             print(spacer, file = target)
             print(include(term, name[term], terms[term], references[term], usage[term]), file = target)
         print(spacer, file = target)
-        end = '</body></html>'
-        print(end, file = target)        
+        print(ending, file = target)        
