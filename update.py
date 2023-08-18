@@ -1,9 +1,5 @@
 pending = "We have not had a chance to write a definition yet, sorry for the inconvenience."
 
-# https://www.mathjax.org/#gettingstarted
-latex = '''<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>'''
-
 spacer = '\n\n'
 punct = ' .,:;-()s' # plurals are okay to link
 
@@ -86,7 +82,7 @@ for sheet in glossary.sheet_names:
                 extend.add(course)
             elif values[course] == 'use': # used in this course, no further detail given
                 use.add(course)
-        concept = str(values['Concept'])
+        concept = str(values['Concept']).strip().lstrip()
         name[concept] = linkify(concept)
         link[sheet][concept] = f'<a href="{sheet}.html#{name[concept]}">{concept}</a>'
         written = str(values['Definition'])
@@ -94,7 +90,7 @@ for sheet in glossary.sheet_names:
         refs = '' if refs == 'nan' else refs
         if written == 'nan':
             written = pending
-        if concept not in terms: # new concept
+        if concept not in terms:
             terms[concept] = written
             references[concept] = refs 
             usage[concept] = (intro, extend, use)            
@@ -105,9 +101,11 @@ for sheet in glossary.sheet_names:
                 references[concept] += '\n' + refs
             (i, e, u) = usage[concept]
             usage[concept] = ( intro | i, extend | e, use | u)
+    # insert links from longest to shortest
+    ordering = sorted(list(terms.keys()), key = lambda s: len(s))
     for term in terms:
         definition = terms[term]
-        for other in terms:
+        for other in ordering:
             if other == term:
                 continue # no self-referencing
             if other in definition:            
@@ -130,11 +128,11 @@ beginning = '''<!DOCTYPE html>
 <link rel="stylesheet" href="custom.css">
 <link rel="stylesheet" href="style-2022.css">''' 
 
-inter = '''</head>
-<body class="content" role="document">
+inter = '''<body class="content" role="document">
 <section class="bg-">
 <div class="container-fluid">'''
 
+# https://www.mathjax.org/#gettingstarted
 ending = '''</div>
 </section>
 <footer>
@@ -148,12 +146,13 @@ McGill University
 <script src="popper.min.js"></script>
 <script src="bootstrap.min.js"></script>
 <script src="scripts.min.js "></script>
-</body>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></body>
 </html>'''
 
 for theme in link:
     with open(f'{theme}.html', 'w') as target:
-        start = beginning + f'<head><title>{theme}</title>{latex}</head>'
+        start = beginning + f'<head><title>{theme}</title></head>'
         start += inter + f'<h2 class="topic-heading">Glossary for {theme}</h2>\n' 
         print(start, file = target)
         listing = sorted(list(link[theme].keys()), key = lambda s: s.casefold())
