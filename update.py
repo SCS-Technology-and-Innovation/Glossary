@@ -1,4 +1,4 @@
-pending = "We have not had a chance to write a definition yet, sorry for the inconvenience."
+pending = 'We have not had a chance to write a definition yet, sorry for the inconvenience. Please submit the <a href="https://forms.office.com/r/VZpfFrZhRu">feedback form</a> if you would like us to prioritize writing this one in particular.'
 
 spacer = '\n\n'
 punct = ' .,:;-()s' # plurals are okay to link
@@ -25,7 +25,7 @@ def include(term, name, definition, references, appearances):
     definition = definition.replace('\n\n', '</p><p>')# paragraph change
     output += f'{definition}\n\n'
     if len(references) > 0:
-        output += f'<h3>References</h3>\n<ol>'
+        output += f'<h3>Suggested links</h3>\n<ol>'
         for ref in references.split():
             url = ref.strip().lstrip()
             if 'http' in url: 
