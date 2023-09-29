@@ -108,6 +108,8 @@ for sheet in glossary.sheet_names:
         for other in ordering:
             if other == term:
                 continue # no self-referencing
+            if len(other) < 3:
+                continue # skip single and two-letter stuff as it is probably not a real match
             if other in definition:            
                 if other in link[sheet]: # it is on this sheet
                     definition = anchor(definition, other, link[sheet][other])
