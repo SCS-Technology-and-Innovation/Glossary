@@ -122,7 +122,17 @@ for sheet in glossary.sheet_names:
 
 beginning = '''<!DOCTYPE html>
 <HTML lang="en">
-<HEAD>  
+<HEAD>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F8SJ1WFY9N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-F8SJ1WFY9N');
+</script>
+
 <META HTTP-EQUIV="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="all.min.css">
